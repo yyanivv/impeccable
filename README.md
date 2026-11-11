@@ -1,5 +1,7 @@
 # Impeccable
 
+> **Fork note (yyanivv/impeccable, branch `no-binary-no-telemetry`).** This fork ships the skill as text only. The launcher, the engine binary, its checksums and the live-mode browser scripts are removed from `skill/scripts/` and `.claude/skills/impeccable/scripts/`, and the repo's `.claude/settings.json` installs no hooks. Engine-only features (`live`, `generate`, `pin`, `hooks`, `doctor`, the design detector) do not work. In the Rust source, telemetry is always off, the `/api/chosen` ping is never sent and the `/api/version` update check is removed. That Rust change is not compiled or tested. Install by copying `.claude/skills/impeccable` into a project's `.claude/skills/`; do not use `npx impeccable install`, which installs upstream.
+
 The design vocabulary for your coding agent. Steer with `polish` and `bolder`, review with `critique` and `audit`, and catch AI slop before it ships.
 
 From your project root:

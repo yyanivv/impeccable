@@ -4,9 +4,6 @@ description: "Use when the user wants to design, redesign, shape, critique, audi
 claude-code-description: "Use to design, redesign, critique, audit, polish or animate a frontend: websites, landing pages, dashboards, app UI, components, native iOS/Android screens, or a design system (DESIGN.md)."
 argument-hint: "[{{command_hint}}] [target]"
 user-invocable: true
-allowed-tools:
-  - Bash(npx impeccable *)
-  - Bash({{scripts_path}}/impeccable *)
 license: Apache 2.0
 ---
 
@@ -19,11 +16,11 @@ Core principles:
 
 ## Setup
 
-1. Run `<skill-base-dir>/scripts/impeccable context` once per session, where `<skill-base-dir>` is the directory that contains this SKILL.md (the skill folder, not a plugin root two levels above it); keep cwd at the user's project. That base directory resolves every `{{scripts_path}}/impeccable <verb>` command in this skill and its references, and `{{scripts_path}}` is the fallback only when the runtime reports no base directory. On a Windows shell without `sh`, call `{{scripts_path}}/impeccable.cmd` instead. The launcher runs a self-contained binary that ships next to it or is downloaded once on first run; no Node or other runtime is required. Pass a named source file or route as `--target <path>`. It loads PRODUCT.md, DESIGN.md, the matching surface brief, and native-platform guidance when applicable; follow its directives and do not rerun it. <!-- rule:skill-setup-context -->
+1. This fork ships no engine binary and no launcher; nothing in this skill runs code on the user's machine or calls a network service. Load the project context yourself, once per session: PRODUCT.md and DESIGN.md at the project root (or where the user points), the matching surface brief under `.impeccable/surfaces/` when one exists, and, when PRODUCT.md's `## Platform` is `ios`, `android`, or `adaptive`, [reference/ios.md](reference/ios.md), [reference/android.md](reference/android.md), or both. A missing PRODUCT.md sends a new surface or a redesign through init first; a narrow refinement may proceed on the incumbent code. Never invent missing context. <!-- rule:skill-setup-context -->
 2. Load the request's playbook: its Commands-table reference for an explicit/implied sub-command, or [reference/new-work.md](reference/new-work.md) for a new surface or replacement visual world. Inspect target and incumbent visual truth before editing. When the app cannot run, start with committed visual-regression goldens or screenshot fixtures; verify target and freshness against current tokens, CSS, components, or assets, resolve conflicts, and compare theme/variant captures. <!-- rule:skill-setup-command-ref --> <!-- rule:skill-setup-read-project -->
 3. After resolving analysis and direction, read [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI edit, including small refinements. It carries the quality floor, the absolute bans, and the reflexes no detector catches. Do not load it for planning-only work. <!-- rule:skill-craft-floor-load -->
 
-**Launcher unavailable:** On refusal or failure, send a separate message **before the next tool call**: “Context loading did not run; I’ll read the existing project context directly.” Then read existing PRODUCT.md and DESIGN.md without inventing missing context, follow applicable steps 2–3, including reading [reference/craft-floor.md](reference/craft-floor.md) immediately before any UI edit, and continue through permitted tools. This applies to planning and editing; launcher failure alone does not block either.
+**No engine:** Reference files still name `scripts/impeccable <verb>` calls (`context`, `detect`, `hook`, `live`, `poll`, `concept-seed`, `serve-question`, `generate-image`, `doctor`, `pin`, `telemetry`, and others). This fork removed that binary, so each such call has nothing to run. Skip it, do the same work by hand with your own tools where the reference describes the result (read the files, inspect the code, look at the rendered page), and tell the user once which automated step did not run. Never download, build, or install an engine, and never run `npx impeccable`, to fill the gap.
 
 ## How to design
 
@@ -77,15 +74,11 @@ Routing: <!-- rule:skill-routing -->
 - **No argument:** read [routing.md](reference/routing.md) and present its context-aware menu; never auto-run a command.
 - **Explicit or clearly implied request to run a command:** load its reference (native variant on native platforms) and follow it. Ask once if two commands fit.
 - **Workflow or command-selection question:** read [Workflow questions](reference/routing.md#workflow-questions).
-- **Otherwise:** treat the request as general design work. Missing PRODUCT.md routes a new surface or replacement world through init, then new-work; a narrow refinement of existing code proceeds on the incumbent implementation as `impeccable context` directs, offering init afterward rather than blocking on it.
+- **Otherwise:** treat the request as general design work. Missing PRODUCT.md routes a new surface or replacement world through init, then new-work; a narrow refinement of existing code proceeds on the incumbent implementation, offering init afterward rather than blocking on it.
 - `teach` aliases `init`. `craft` is a deprecated alias for ordinary new-work and adds nothing. `shape` owns task discovery, then enters new-work only for visual-world and surface-concept decisions.
 
-After init writes PRODUCT.md, resume without rerunning `impeccable context`; init loads the native platform reference itself when the platform it recorded is `ios`, `android`, or `adaptive`.
+After init writes PRODUCT.md, resume the original request without reloading context; init loads the native platform reference itself when the platform it recorded is `ios`, `android`, or `adaptive`.
 
-**Pin / Unpin:** `{{scripts_path}}/impeccable pin <pin|unpin> <command>` creates or removes a standalone `{{command_prefix}}<command>` shortcut. Report the script's result concisely; relay stderr verbatim on error.
-
-**Hooks:** `{{command_prefix}}impeccable hooks <on|off|status|ignore-rule|ignore-file|ignore-value|reset>` manages the design detector hook for this project (auto-runs the detector after UI file edits and surfaces findings). Load [reference/hooks.md](reference/hooks.md) when the user invokes it with any argument.
-
-**Doctor:** `{{command_prefix}}impeccable doctor` reports and repairs drift between this project's Impeccable artifacts (PRODUCT.md, DESIGN.md and its sidecar, config, surface briefs, the hook) and what this version reads. Load [reference/doctor.md](reference/doctor.md) when the user invokes it, or when they ask what is out of date, stale, or needs refreshing. A `CONTEXT_STALE` directive in Setup's output is the cheap subset of the same report; act on it there per its own instructions rather than running doctor unasked. <!-- rule:skill-doctor-route -->
+**Engine-only features:** `live`, `generate`, `pin`, `hooks`, `doctor`, and the design-detector hook need the engine that this fork removed. When the user asks for one, say it is not available in this fork and offer the nearest manual path: `critique` or `polish` on the target instead of live variants, or a by-hand read of PRODUCT.md, DESIGN.md, and `.impeccable/` instead of doctor.
 
 **Never repair drift as a side effect of a design task.** A `CONTEXT_STALE` finding is reported, not acted on, unless the user asks. The one exception is a finding marked `auto`, which the next write to that file performs anyway. <!-- rule:skill-drift-not-a-side-quest -->

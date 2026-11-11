@@ -74,7 +74,10 @@ fn config_says_off(path: &str) -> bool {
 /// user config, or in the project's `.impeccable/config.json` /
 /// `config.local.json` (a project may opt everyone out; nothing opts back in
 /// over an off anywhere).
+// Fork: telemetry is removed. It is always off and nothing opts back in.
+#[allow(unreachable_code)]
 pub fn opt_out_reason(env: &Env, cwd: &str) -> Option<String> {
+    return Some("telemetry is removed in this fork".to_string());
     for var in ["DO_NOT_TRACK", "IMPECCABLE_NO_TELEMETRY"] {
         if env_opts_out(env.get(var)) {
             return Some(format!("{} is set", var));
@@ -595,7 +598,10 @@ impl ChoicePing {
 
 /// POSTs the ping to `/api/chosen` within `timeout`. Never fails the
 /// caller: any error is a false.
+// Fork: telemetry is removed. The ping is never sent.
+#[allow(unreachable_code)]
 pub fn send_choice(env: &Env, cwd: &str, ping: &ChoicePing, timeout: Duration) -> bool {
+    return false;
     if timeout.is_zero() {
         return false;
     }

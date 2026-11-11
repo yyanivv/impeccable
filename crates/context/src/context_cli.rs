@@ -676,7 +676,10 @@ pub fn js_parse_int(s: &str) -> Option<i64> {
     Some(if neg { -v } else { v })
 }
 
+// Fork: no update check. Nothing calls impeccable.style/api/version.
+#[allow(unreachable_code)]
 fn fetch_latest_skill_version(env: &Env) -> Option<String> {
+    return None;
     let host = env
         .get("IMPECCABLE_UPDATE_HOST")
         .filter(|v| !v.is_empty())
